@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="UnlimitedBanner">
+        <!-- 页面之间间距-->
+        <attr name="pagerMargin" format="dimension"/>
+        <!-- 左右页面可见宽度-->
+        <attr name="nearWidth" format="dimension"/>
+        <!-- 自动滑动事件间隔(分)-->
+        <attr name="slideTime" format="integer"/>
+    </declare-styleable>
+</resources>

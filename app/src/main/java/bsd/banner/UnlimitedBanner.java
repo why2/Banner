@@ -3,7 +3,6 @@ package bsd.banner;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -28,8 +27,6 @@ public class UnlimitedBanner extends ViewPager {
     //控制自动滑动
     private Handler mHandler;
     private Runnable mRunnable;
-    //选中下一页的标识
-    private int SELECTEDNEXT = 0x123;
     //当前index,1才是真正的第一个，0不是
     private int index = 1;
     //手动滚动标记
@@ -114,12 +111,11 @@ public class UnlimitedBanner extends ViewPager {
                 switch (state) {
                     case ViewPager.SCROLL_STATE_DRAGGING:
                         isFinger = true;
-                        mHandler.removeMessages(SELECTEDNEXT);
                         mHandler.removeCallbacks(mRunnable);
                         break;
                     case ViewPager.SCROLL_STATE_IDLE:
                         if (isFinger) {
-                            mHandler.post(mRunnable);
+                            mHandler.postDelayed(mRunnable,slideTime);
                             isFinger = false;
                         }
                         break;
@@ -141,29 +137,15 @@ public class UnlimitedBanner extends ViewPager {
      * 自动滚动
      */
     private void autoSlideing() {
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (msg.what == SELECTEDNEXT) {
-                    setCurrentItem(index);
-                    index++;
-                    mHandler.sendEmptyMessageDelayed(SELECTEDNEXT, slideTime);
-                }
-            }
-        };
+        mHandler = new Handler();
         mRunnable = new Runnable() {
             @Override
             public void run() {
-                mHandler.sendEmptyMessage(SELECTEDNEXT);
+                index++;
+                setCurrentItem(index);
+                mHandler.postDelayed(mRunnable,slideTime);
             }
         };
-        mHandler.post(mRunnable);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        mHandler.removeCallbacks(mRunnable);
+        mHandler.postDelayed(mRunnable,slideTime);
     }
 }
